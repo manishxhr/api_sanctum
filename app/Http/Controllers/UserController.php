@@ -19,7 +19,7 @@ class UserController extends Controller
             return response()->json([
                 'status'=>false,
                 'message'=>$validator->messages(),
-            ],400);
+            ],400); 
         }
         else{
             $data= $validator->validated();
