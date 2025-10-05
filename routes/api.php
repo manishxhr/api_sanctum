@@ -16,11 +16,11 @@ Route::post('login', [UserController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function(){
     Route::post('logout',[UserController::class, 'logout']);
 
+    Route::get('posts',[TaskController::class,'index']);
+    Route::post('/create',[TaskController::class, 'create']);
+    // Route::get('/users',[TaskController::class, 'index']);
+    Route::get('/task/{id}',[TaskController::class, 'show']);
+    Route::delete('/task/delete/{id}',[TaskController::class, 'delete']);
+
 });
 
-Route::get('posts',[TaskController::class,'index'])->middleware('auth:sanctum');
-
-Route::post('/create',[TaskController::class, 'create']);
-Route::get('/users',[TaskController::class, 'index']);
-Route::get('/user/{id}',[TaskController::class, 'show']);
-Route::delete('/user/delete/{id}',[TaskController::class, 'delete']);

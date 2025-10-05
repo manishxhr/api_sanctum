@@ -34,7 +34,7 @@ class TaskController extends Controller
      public function create(Request $request){
           $validator = Validator::make($request->all(),[
             'title'=>'required',
-            'description'=>'required|string',
+            'description'=>'required',
         ]);
             if($validator->fails()){
                 return response()->json([
@@ -45,6 +45,7 @@ class TaskController extends Controller
             }
             else{
                $data=  $validator->validated();
+               $data['user_id'] = $request->user()->id; // assign logged in user
                 try{
                     $task=Task::create($data);
                     return response()->json([
@@ -56,7 +57,8 @@ class TaskController extends Controller
                 catch(\Exception $error){
                     return response()->json([
                         'message'=>'internal server error',
-                        'status'=>0
+                        'status'=>false,
+                        'error'=>$error->getMessage()
                     ],500);
                 }
             }
