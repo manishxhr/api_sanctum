@@ -68,7 +68,7 @@ class TaskController extends Controller
 
 
     public function show($id){
-        $task= Task::find($id);
+       try{ $task= Task::find($id);
         
         if(is_null($task)){
             $data=[
@@ -83,13 +83,21 @@ class TaskController extends Controller
                 'data'=>$task
             ];
         }
-        return response()->json($data,200);
+        return response()->json($data,200);}
+        catch(\Exception $error)
+        {
+            return response()->json([
+                'status'=>false,
+                'message'=>$error->getMessage(),
+
+            ],501);
+        }
 
     }
 
 
     public function delete($id){
-        $task = Task::find($id);
+     $task = Task::find($id);
         if(is_null($task)){
             $data=[
                 'message'=>'task not found',
@@ -115,6 +123,50 @@ class TaskController extends Controller
             }
         }
         return response()->json($data,$code);
+    
     }
+
+
+    public function update(Request $request, $id){
+        $validator= Validator::make($request->all(),[
+            'title'=>'required',
+            'description'=>'required'
+        ]); 
+        if($validator->fails()){
+            return response()->json([
+                'status'=>false,
+                'message'=>$validator->messages()
+            ],401);
+        }
+        else{
+            $data= $validator->validated();
+            $task= Task::find($id);
+            if(is_null($task)){
+                return response()->json([
+                    'status'=>false,
+                    'message'=>'no task found'
+                ],404);
+            }
+            try{
+                $task->update($data);
+                return response()->json([
+                    'status'=>true,
+                    'message'=>'task updated successfully',
+                    'data'=>$task
+                ],200);
+            }
+            catch(\Exception $error)
+            {
+                return response()->json([
+                    'status'=>false,
+                    'message'=>'internal server error',
+                    'error'=>$error->getMessage()
+                ],500);
+            }
+
+        }
+        // $task= Task::find($id);
+    }
+  
 
 }
